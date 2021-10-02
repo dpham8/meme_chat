@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+	<link rel="stylesheet" href="style.css" />
+	<head>
+		<div class="header-area">
+			<h1>  
+				<img src="./images/peeposad.jpg" style="width:60px; height:auto" />
+				Meme Chat
+			</h1>
+		</div>
+	</head>
+
+	<body>
+		<div id="overlay">
+			<div class="inner">
+				<input type="text" id="user" autocomplete="off" placeholder="Enter Name"><button
+				id="senduser">Join</button>
+			</div>
+
+		</div>
+
+		<ul id="messages"></ul>
+		<img src="./images/elmo.gif" style="width:70px; height:auto" />
+		<input type="file" id="uploadfile" />
+		<span id="progress"> uploading: <span id="percentage"></span> %</span>
+	
+		<div id="myModal" class="modal">
+			<span class="close">&times;</span>
+			<img class="modal-content" id="img01">
+			<div id="caption"></div>
+		</div>
+	</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/node_modules//jquery/dist/jquery.min.js"></script>
+<script>
+  
+  $(function () {
+	var socket = io();
+    var username = $('#user');
+    var senduser = $('#senduser');
+	
+	socket.on('chat message', function (msg) {
+      $('#messages').append($('<li>').html(msg));
+    });
+	
+    senduser.click(function () {
+      console.log(username.val());
+      socket.emit("change_username", { username: username.val() })
+      $('#overlay').hide();
+    })
+
+    //serving images and video files
+    $('#uploadfile').bind('change', function (e) {
+       var data = e.originalEvent.target.files[0];
+       readThenSendFile(data);
+     });
+
+    function readThenSendFile(data) {
+
+      //show progress msg
+      $('#progress').fadeIn(100);
+
+      var reader = new FileReader();
+      reader.onload = function (evt) {
+        var msg = {};
+        msg.username = username;
+        msg.file = evt.target.result;
+        msg.fileName = data.name;
+        socket.emit('base64 file', msg);
+      };
+      reader.readAsDataURL(data);
+
+      reader.onprogress = function (currentFile) {
+        if (currentFile.lengthComputable) {
+          var progress = parseInt(((currentFile.loaded / currentFile.total) * 100), 10);
+          $('#percentage').html(progress);
+          console.log(progress);
+        }
+      }
+      reader.onerror = function () {
+        alert("Cannot read file: file size too large");
+      };
+    }
+
+    socket.on('base64 file', (data) => {
+      //hide progress msg when data received
+      $('#progress').hide();
+      //appending data according to data types
+      let filetype = data.fileName.split('.').pop();
+      if (filetype == 'mp4' || filetype == 'ogg' || filetype == 'mkv') {
+        $('#messages').append($('<li>').html(`<p class="username">${data.username}</p><video class="imgupload" src="${data.file}" height="400" width="400" controls/>`));
+      } else if (filetype == 'mp3' || filetype == 'wav' || filetype == 'aac') {
+        $('#messages').append($('<li>').html(`<p class="username">${data.username}</p><audio class="imgupload" src="${data.file}" height="400" width="400" controls/>`));
+      } else {
+        $('#messages').append($('<li>').html(`<p class="username">${data.username}</p><img class="imgupload" src="${data.file}" height="200" width="200" onclick="showimg(this)"/>`));
+      }
+    })
+
+  });
+
+  // Get the modal
+  var modal = document.getElementById("myModal");
+
+  // Get the image and insert it inside the modal - use its "alt" text as a caption
+  function showimg(data) {
+    var img = data;
+    var modalImg = document.getElementById("img01");
+    img.onclick = function () {
+      modal.style.display = "block";
+      modalImg.src = this.src;
+    }
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+      modal.style.display = "none";
+    }
+  }
+  
+</script>
+
+</html>
