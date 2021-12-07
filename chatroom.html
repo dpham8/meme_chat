@@ -43,6 +43,19 @@
       </form>
     </div>
   </div>
+
+  <!--Changes background image ever 10 seconds-->
+  <script>
+    setInterval(
+      function () {
+        var randomColor = Math.floor(Math.random()*16777215).toString(16);
+        document.body.style.backgroundColor = "#"+randomColor;
+      },10000);
+  </script>
+
+<!--Used for rain  effect-->
+<div class="rain"></div>
+
   <script>
  var socket = io();
 
@@ -147,9 +160,9 @@
           //let imgbox = document.createElement("img");
           imgbox.src = gifURL;
           imgbox.onclick = () => {
-				    socket.emit('imageDB', gifURL);
-            var modalImageSelect = document.getElementById("imageSelect");
-            modalImageSelect.style.display = "none";
+		     socket.emit('imageDB', gifURL);
+             var modalImageSelect = document.getElementById("imageSelect");
+             modalImageSelect.style.display = "none";
           }
           messageDisplay.appendChild(imgbox);
           })(document.createElement("img"))
@@ -178,6 +191,7 @@
       }
     }
   }
+
 </script>
 </body>
 </html>
