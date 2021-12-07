@@ -129,19 +129,31 @@
 
 #myImg:hover {opacity: 0.7;}
 
+#footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 5%;
+  background-color: darkblue;
+  color: white;
+  text-align: right;
+}
+
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */
+  align-items: center;
+  justify-content: center;
   position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
-  left: 0;
+  /*z-index: 1; /* Sit on top */
+  /*padding-top: 100px; /* Location of the box */
+  /*left: 0;*/
   top: 0;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
 /* Modal Content (Image) */
@@ -198,4 +210,46 @@
   .modal-content {
     width: 100%;
   }
+}
+
+.open-button {
+  background-color: white;
+  color: black;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+}
+ 
+#searchBox {
+  /*display: flex;*/
+  align-items: center;
+  justify-content: center;
+  background-color: grey;
+  position: relative;
+  width:600px;
+  height: 800px;
+  border: solid darkgrey 2px;
+  overflow-y: auto;
+}
+
+#searchBottom {
+  flex: 1;
+  position: fixed;
+  bottom:0;
+  background-color: darkgrey;
+  bottom: 0;
+}
+
+#display-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+}
+
+img {
+  height: 40%;
+  width: 40%;
+  height: auto;
+  object-fit: cover;
 }
