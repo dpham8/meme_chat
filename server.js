@@ -1,16 +1,3 @@
-exports.homeRoutes = (req, res) => {
-  // make request to the /api/users
-  //your-app.heroku.com/path/to/your/api
-  axios
-    .get("https://meme-chat-proj.herokuapp.com/")
-    .then(function (response) {
-      res.render("index", { users: response.data });
-    })
-    .catch((err) => {
-      res.send(err);
-    });
-};
-
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
