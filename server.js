@@ -1,14 +1,4 @@
-export default {
-
-
-  saveClient: function(clientData) {
-    return axios({
-method:"post",
-url:"/api/saveClient",
-data:clientData
-    })
-
-  }
+baseUrl = process.env.baseURL || "http://localhost:3001"
 
 var express = require('express');
 var app = express();
