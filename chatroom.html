@@ -148,6 +148,8 @@
           imgbox.src = gifURL;
           imgbox.onclick = () => {
 				    socket.emit('imageDB', gifURL);
+            var modalImageSelect = document.getElementById("imageSelect");
+            modalImageSelect.style.display = "none";
           }
           messageDisplay.appendChild(imgbox);
           })(document.createElement("img"))
@@ -178,7 +180,4 @@
   }
 </script>
 </body>
-
-
-
 </html>
