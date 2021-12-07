@@ -5,7 +5,7 @@ var io = require('socket.io')(server);
 var fs = require('fs'); // used for file serving
 
 var port = process.env.PORT || 5000;
-baseUrl = process.env.baseURL || "http://localhost:3001";
+baseUrl = process.env.baseURL || "http://localhost:5000";
 
 app.use(express.static(__dirname));
 
