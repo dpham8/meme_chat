@@ -10,6 +10,8 @@
     </h1>
   </div>
   <script src="./node_modules/axios/dist/axios.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/node_modules//jquery/dist/jquery.min.js"></script>
 </head>
 
 <body>
@@ -41,11 +43,7 @@
       </form>
     </div>
   </div>
-</body>
-<script src="/socket.io/socket.io.js"></script>
-<script src="/node_modules//jquery/dist/jquery.min.js"></script>
-
-<script>
+  <script>
  var socket = io();
 
   $(function () {
@@ -130,7 +128,6 @@
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
       modal.style.display = "none";
-	  
     }
   }
 
@@ -145,15 +142,16 @@
         let messageDisplay = document.getElementById("display-list");
         messageDisplay.innerHTML="";
         for(let i = 0; i < 8; ++i) {
+          (function(imgbox) {
           var gifURL = response.data.results[i].media[0].gif.url;
-          let imgbox = document.createElement("img");
+          //let imgbox = document.createElement("img");
           imgbox.src = gifURL;
-		  
           imgbox.onclick = () => {
-				socket.emit('imageDB',gifURL);
-				//$('#messages').append($('<li>').html(`<img src="${gifURL}" alt="Trulli" width="500" height="333">`));
+				    socket.emit('imageDB', gifURL);
           }
           messageDisplay.appendChild(imgbox);
+          })(document.createElement("img"))
+         
         }
       })
       .catch(response => {
@@ -161,10 +159,9 @@
       })
   }
 
- socket.on('imageDB', (data) => {
-      //hide progress msg when data received
+  socket.on('imageDB', (data) => {
       $('#messages').append($('<li>').html(`<p class="username">${data.username}</p><img src="${data.file}" alt="Trulli" width="500" height="333">`));
-});
+  });
 
   function openGifSelect() {
     var modalImageSelect = document.getElementById("imageSelect");
@@ -179,8 +176,9 @@
       }
     }
   }
-  
-
 </script>
+</body>
+
+
 
 </html>
