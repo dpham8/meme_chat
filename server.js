@@ -1,3 +1,5 @@
+url:"/api/saveClient";
+
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
@@ -5,17 +7,6 @@ var io = require('socket.io')(server);
 var fs = require('fs'); // used for file serving
 
 var port = process.env.PORT || 5000;
-
-const apiClient = axios.create({
-    baseURL: '' + port,
-    withCredentials: false, // This is the default
-    crossDomain: true,
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json'
-    },
-    timeout: 10000
-})
 
 app.use(express.static(__dirname));
 
