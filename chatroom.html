@@ -1,49 +1,62 @@
 <!DOCTYPE html>
 <html>
-	<link rel="stylesheet" href="style.css" />
-	<head>
-		<div class="header-area">
-			<h1>  
-			<img src="./images/peeposad.JPG" style="width:60px; height:auto" />
-			Meme Chat
-			</h1>
-		</div>
-	</head>
+<link rel="stylesheet" href="style.css" />
 
-	<body>
-		<div id="overlay">
-			<div class="inner">
-			<input type="text" id="user" autocomplete="off" placeholder="Enter Name"><button
-			id="senduser">Join</button>
-			</div>
+<head>
+  <div class="header-area">
+    <h1>
+      <img src="./images/peeposad.jpg" style="width:60px; height:auto" />
+      Meme Chat
+    </h1>
+  </div>
+  <script src="./node_modules/axios/dist/axios.min.js"></script>
+</head>
 
-		</div>
-
-		<ul id="messages"></ul>
-		<img src="./images/elmo.gif" style="width:70px; height:auto" />
-		<input type="file" id="uploadfile" />
-		<span id="progress"> uploading: <span id="percentage"></span> %</span>
-	
-		<div id="myModal" class="modal">
-		<span class="close">&times;</span>
-		<img class="modal-content" id="img01">
-		<div id="caption"></div>
-		</div>
-	</body>
-
+<body>
+  <div id="overlay">
+    <div class="inner">
+      <input type="text" id="user" autocomplete="off" placeholder="Enter Name"><button id="senduser">Join</button>
+    </div>
+  </div>
+  <ul id="messages"></ul>
+  <img src="./images/elmo.gif" style="width:70px; height:auto" />
+  <div style="display: flex; flex-direction: column; width: 87px;">
+    <input type="file" title="" id="uploadfile"/>
+    <button type="button" class="open-button" onclick="openGifSelect()">GIF SELECT</button>
+  </div>
+  <span id="progress"> uploading: <span id="percentage"></span> %</span>
+  <div id="myModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="img01">
+    <div id="caption"></div>
+  </div>
+  <div id="imageSelect" class="modal">
+    <span class="close" id="close">&times;</span>
+    <div id="searchBox">
+      <div id="display-list"></div>
+      <form id="searchBottom" onsubmit="this.reset(); return false;">
+        <input type="text" id="searchText">
+        <label for="searchText">Gif Search</label>
+        <button type="submit" onclick="searchKey()">Search</button>
+      </form>
+    </div>
+  </div>
+</body>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/node_modules//jquery/dist/jquery.min.js"></script>
+
 <script>
-  
+ var socket = io();
+
   $(function () {
-	var socket = io();
+   
     var username = $('#user');
     var senduser = $('#senduser');
-	
-	socket.on('chat message', function (msg) {
+
+    socket.on('chat message', function (msg) {
       $('#messages').append($('<li>').html(msg));
     });
-	
+
     senduser.click(function () {
       console.log(username.val());
       socket.emit("change_username", { username: username.val() })
@@ -52,12 +65,11 @@
 
     //serving images and video files
     $('#uploadfile').bind('change', function (e) {
-       var data = e.originalEvent.target.files[0];
-       readThenSendFile(data);
-     });
+      var data = e.originalEvent.target.files[0];
+      readThenSendFile(data);
+    });
 
     function readThenSendFile(data) {
-
       //show progress msg
       $('#progress').fadeIn(100);
 
@@ -99,6 +111,7 @@
 
   });
 
+
   // Get the modal
   var modal = document.getElementById("myModal");
 
@@ -117,9 +130,57 @@
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
       modal.style.display = "none";
+	  
+    }
+  }
+
+  function searchKey() {
+    let usr = document.getElementById("searchText").value.replace(/\s/, '-');
+    let APIKEY = "UKH82P6ORNF5";
+    //let rating = "g"
+    let url = `https://g.tenor.com/v1/search?limit=8&key=${APIKEY}&q=${usr}`;
+
+    axios.get(url)
+      .then(response => {
+        let messageDisplay = document.getElementById("display-list");
+        messageDisplay.innerHTML="";
+        for(let i = 0; i < 8; ++i) {
+          var gifURL = response.data.results[i].media[0].gif.url;
+          let imgbox = document.createElement("img");
+          imgbox.src = gifURL;
+		  
+          imgbox.onclick = () => {
+				socket.emit('imageDB',gifURL);
+				//$('#messages').append($('<li>').html(`<img src="${gifURL}" alt="Trulli" width="500" height="333">`));
+          }
+          messageDisplay.appendChild(imgbox);
+        }
+      })
+      .catch(response => {
+        console.log(response);
+      })
+  }
+
+ socket.on('imageDB', (data) => {
+      //hide progress msg when data received
+      $('#messages').append($('<li>').html(`<p class="username">${data.username}</p><img src="${data.file}" alt="Trulli" width="500" height="333">`));
+});
+
+  function openGifSelect() {
+    var modalImageSelect = document.getElementById("imageSelect");
+    var close = document.getElementById("close");
+    modalImageSelect.style.display = "flex";
+    close.onclick = () => {
+      modalImageSelect.style.display = "none";
+    }
+    window.onclick = event => {
+      if(event.target == modalImageSelect) {
+        modalImageSelect.style.display = "none";
+      }
     }
   }
   
+
 </script>
 
 </html>

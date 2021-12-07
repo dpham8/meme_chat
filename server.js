@@ -20,9 +20,20 @@ io.on('connection', (socket) => {
   socket.on('change_username', (data) => {
     if (data.username == '') socket.username = 'Anonymous';
     else socket.username = data.username;
-    socket.broadcast.emit('chat message', '<span class="username"> Pepe ' + socket.username + ' has joined the room!');
+    socket.broadcast.emit('chat message', '<span class="username"> Pepe ' 
+								+ socket.username + ' has joined the room!');
   })
 
+  socket.on('imageDB', (arg) => {
+	  //socket.broadcast.emit('chat message',arg);
+	  io.sockets.emit('imageDB',  //include sender
+      {
+        username: socket.username=='' ? 'Anonymous' : socket.username,
+		file: arg
+	  }
+	);  
+  }); 
+  
   //serving images
   socket.on('base64 file', function (msg) {
     io.sockets.emit('base64 file',  //include sender
